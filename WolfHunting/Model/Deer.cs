@@ -4,12 +4,13 @@ using Mars.Interfaces.Agents;
 using Mars.Interfaces.Annotations;
 using Mars.Interfaces.Environments;
 using Mars.Interfaces.Layers;
+using WolfHunting.Model.Agents;
 using WolfHunting.Model.Layers;
 
 namespace WolfHunting.Model
 {
     
-    public class Rabbit : AbstractAnimal, IAgent<ForestLayer>, IPositionable
+    public class Deer : AbstractAnimal, IAgent<ForestLayer>, IPositionable
     {
         [PropertyDescription]
         public UnregisterAgent UnregisterHandle { get; set; }
@@ -18,17 +19,16 @@ namespace WolfHunting.Model
         private bool ReproducibleSpawning { get; set; }
         [PropertyDescription]
         private int Seed { get; set; }
-
-
-
+        
         private ForestLayer _forestLayer;
 
         public void Init(ForestLayer layer)
         {
             _forestLayer = layer;
             Position = _forestLayer.FindRandomPosition(ReproducibleSpawning);
-            SetupInitialValues();
-            _forestLayer.RabbitEnvironment.Insert(this);
+            if (ReproducibleSpawning) SetupInitialValues(Seed);
+            else SetupInitialValues();
+            _forestLayer.DeerEnvironment.Insert(this);
         }
         
 
@@ -39,12 +39,6 @@ namespace WolfHunting.Model
             
         }
         
-        
-
-
-        
-        
-
 
         public Guid ID { get; set; }
         public Position Position { get; set; }
@@ -52,30 +46,31 @@ namespace WolfHunting.Model
 
         public override void Move()
         {
-            throw new NotImplementedException();
-        }
-
-        public override void Mature()
-        {
-            IncrementAge();
+            
         }
 
         public override void Die()
         {
-            throw new NotImplementedException();
+            _forestLayer.DeerEnvironment.Remove(this);
+            UnregisterHandle.Invoke(_forestLayer, this);
         }
 
-        public override void Reproduce()
+        public override void Reproduce(int amount)
         {
-            throw new NotImplementedException();
+            AdjustReproductionUrge(amount);
         }
 
-        public override void Eat()
+        public override void Eat(int amount)
         {
-            throw new NotImplementedException();
+            AdjustHunger(amount);
         }
 
-        public override void Drink()
+        public override void Drink(int amount)
+        {
+            AdjustThirst(amount);
+        }
+
+        protected override Position FindMotivationalTargetInSight(Motivation motivation, IRasterLayer layer, ISpatialGraphEnvironment environment)
         {
             throw new NotImplementedException();
         }

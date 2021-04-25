@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Mars.Interfaces.Model;
+using WolfHunting.Model;
+using WolfHunting.Model.Agents;
 using WolfHunting.Model.Layers;
 
 namespace WolfHunting
@@ -9,20 +12,10 @@ namespace WolfHunting
     {
         static void Main(string[] args)
         {
-            Dictionary<Motivation, int> _motivattions = new Dictionary<Motivation, int>()
-            {
-                {Motivation.Thirst, 32}, {Motivation.Hunger, 32}, {Motivation.ReproductionUrge, 32}, {Motivation.Sleep, 33}
-            };
-            var max = _motivattions.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-            Console.WriteLine(max);
-            
-            
-            if (_motivattions.TryGetValue(Motivation.Hunger, out var value))
-            {
-                Console.WriteLine(value);
-            }
-
-            
+            var description = new ModelDescription();
+            description.AddLayer<ForestLayer>();
+            description.AddAgent<Deer, ForestLayer>();
+            description.AddAgent<Wolf, ForestLayer>();
 
         }
     }
